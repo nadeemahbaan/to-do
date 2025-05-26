@@ -1,8 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./TodoApp.css";
+
 const TodoApp = () => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
+
+  //  Load tasks from localStorage on component mount
+  useEffect(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+    }
+  }, []);
+
+  //  Save tasks to localStorage whenever tasks change
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   const handleChange = (e) => {
     setTask(e.target.value);
@@ -14,7 +28,7 @@ const TodoApp = () => {
       setTask("");
     }
   };
-  // Toggle completed state
+
   const toggleComplete = (index) => {
     const updatedTasks = tasks.map((t, i) =>
       i === index ? { ...t, completed: !t.completed } : t
@@ -22,7 +36,6 @@ const TodoApp = () => {
     setTasks(updatedTasks);
   };
 
-  // Delete a task
   const handleDelete = (index) => {
     const filteredTasks = tasks.filter((_, i) => i !== index);
     setTasks(filteredTasks);
