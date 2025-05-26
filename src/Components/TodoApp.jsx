@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./TodoApp.css"
+import "./TodoApp.css";
 const TodoApp = () => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
@@ -10,9 +10,22 @@ const TodoApp = () => {
 
   const handleAddTask = () => {
     if (task.trim() !== "") {
-      setTasks([...tasks, task]);
+      setTasks([...tasks, { text: task, completed: false }]);
       setTask("");
     }
+  };
+  // Toggle completed state
+  const toggleComplete = (index) => {
+    const updatedTasks = tasks.map((t, i) =>
+      i === index ? { ...t, completed: !t.completed } : t
+    );
+    setTasks(updatedTasks);
+  };
+
+  // Delete a task
+  const handleDelete = (index) => {
+    const filteredTasks = tasks.filter((_, i) => i !== index);
+    setTasks(filteredTasks);
   };
 
   return (
@@ -31,9 +44,16 @@ const TodoApp = () => {
 
       <ul className="task-list">
         {tasks.map((item, index) => (
-          <li key={index}>
-            {item}
-            {/* Delete / Complete buttons will be added later */}
+          <li key={index} className={item.completed ? "completed" : ""}>
+            <span
+              onClick={() => toggleComplete(index)}
+              style={{ cursor: "pointer" }}
+            >
+              {item.text}
+            </span>
+            <button className="delete-btn" onClick={() => handleDelete(index)}>
+              Delete
+            </button>
           </li>
         ))}
       </ul>
